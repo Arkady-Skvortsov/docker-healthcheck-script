@@ -1,0 +1,9 @@
+FROM rabbitmq:management-alpine
+
+RUN apk add --no-cache bash
+
+COPY ./rabbitmq-healthcheck /usr/local/bin/rabbitmq-healthcheck
+
+RUN chmod +x /usr/local/bin/rabbitmq-healthcheck
+
+HEALTHCHECK --interval=25s --timeout=30s --start-period=10s --retries=5 CMD ["rabbitmq-healthcheck"]

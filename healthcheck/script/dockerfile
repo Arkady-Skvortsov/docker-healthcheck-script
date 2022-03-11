@@ -1,0 +1,9 @@
+FROM bash:4.4
+
+COPY healthcheck /usr/local/bin/healthcheck
+
+RUN bash healthcheck 5 30 server-container
+RUN bash healthcheck 5 30 nginx-container
+RUN bash healthcheck 5 30 pg-container
+RUN bash healthcheck 5 30 redis-container
+RUN bash healthcheck 5 30 amqp-container
