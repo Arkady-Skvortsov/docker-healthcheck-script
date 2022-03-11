@@ -3,6 +3,7 @@ version: "3.9"
 services:
   service:
     image: server-image
+    container_name: server-container
     build:
       context: ./server
       dockerfile: ./dockrefile
@@ -94,8 +95,8 @@ services:
       - test-network
 
   bash:
-    image: 389798/adventure-bash-image
-    container_name: adventure-bash-container
+    image: bash-image
+    container_name: bash-container
     build:
       context: ./healthcheck/script
       dockerfile: ./dockerfile
