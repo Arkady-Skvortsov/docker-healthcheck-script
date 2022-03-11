@@ -17,7 +17,6 @@ It's for automatic healthcheck, when you'r containers up; script do few retrais 
 ```
 
 (⚠) Sometimes would be error with shell script and in console you would seen `unexpected end of file`; If you don't want to see it, save shell script in `LF` mode not `CRLF`
-
 (💻) in VScode it would be here 👉
 
 <p align="center"><img src="./assets/vs-code-screen-1.png" width="400" /></p>
