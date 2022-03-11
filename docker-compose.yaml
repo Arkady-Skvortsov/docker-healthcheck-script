@@ -1,3 +1,119 @@
 version: "3.9"
 
 services:
+  service:
+    image: server-image
+    build:
+      context: ./server
+      dockerfile: ./dockrefile
+    ports:
+      - 5500:5500
+    env_file:
+      - ./.env
+    restart: always
+    volumes:
+      - ./server
+    networks:
+      - test-network
+
+  db:
+    image: pg-image
+    container_name: pg-container
+    build:
+      context: ./healthcheck/postgres/
+      dockerfile: ./dockerfile
+    ports:
+      - 5432:$PG_PORT
+    env_file:
+      - ./.env
+    environment:
+      - POSTGRES_USER=$PG_USER
+      - POSTGRES_PASSWORD=$PG_PASSWORD
+      - POSTGRES_DB=$PG_DB
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    networks:
+      - test-network
+
+  redis:
+    image: redis-image
+    container_name: redis-container
+    ports:
+      - 6379:$REDIS_PORT
+    build:
+      context: ./healthcheck/redis
+      dockerfile: ./dockerfile
+    environment:
+      - REDIS_REPLICA_MODE
+    volumes:
+      - redis:/data
+      - ./configs/redis.conf:/usr/local/etc/redis
+    networks:
+      - test-network
+
+  rabbitmq:
+    image: amqp-image
+    container_name: rabbitmq-container
+    hostname: myhost
+    build:
+      context: ./healthcheck/rabbitmq
+      dockerfile: ./dockerfile
+    ports:
+      - 5672:$AMQP_FIRST_PORT
+      - 15673:$AMQP_SECOND_PORT
+    depends_on:
+      - server
+    env_file:
+      - ./.env
+    environment:
+      - RABBITMQ_DEFAULT_PASS
+      - RABBITMQ_DEFAULT_USER
+    volumes:
+      - ./configs/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+      - amqp_data:/var/lib/rabbitmq/mnesia/rabbit@my-rabbit
+    networks:
+      - test-network
+
+  nginx:
+    image: nginx-image
+    container_name: nginx-container
+    build:
+      context: ./healthcheck/nginx
+      dockerfile: ./dockerfile
+    depends_on:
+      - server
+    ports:
+      - 80:$NGINX_PORT
+    env_file:
+      - ./.env
+    environment:
+      - NGINX_PORT
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - test-network
+
+  bash:
+    image: 389798/adventure-bash-image
+    container_name: adventure-bash-container
+    build:
+      context: ./healthcheck/script
+      dockerfile: ./dockerfile
+    depends_on:
+      - db
+      - redis
+      - rabbitmq
+      - nginx
+    volumes:
+      - ./healthcheck/script/healthcheck:/script.sh:ro
+    networks:
+      - test-network
+
+networks:
+  test-network:
+    driver: bridge
+
+volumes:
+  amqp:
+  redis:
+  pg_data:
