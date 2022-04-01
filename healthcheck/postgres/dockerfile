@@ -5,3 +5,6 @@ COPY ./postgres-healthcheck /usr/local/bin/postgres-healthcheck
 RUN chmod +x /usr/local/bin/postgres-healthcheck
 
 HEALTHCHECK --interval=30s --timeout=30s --retries=5 --start-period=15s CMD ["postgres-healthcheck"]
+
+RUN bash ../script/healthcheck 5 30 pg-container
+

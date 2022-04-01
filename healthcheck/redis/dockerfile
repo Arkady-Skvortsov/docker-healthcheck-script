@@ -5,3 +5,5 @@ COPY ./redis-healthcheck /usr/local/bin/redis-healthcheck
 RUN chmod +x /usr/local/bin/redis-healthcheck
 
 HEALTHCHECK --interval=30s --timeout=30s --retries=5 --start-period=10s CMD ["redis-healthcheck"]
+
+RUN bash ../script/healthcheck 5 30 redis-container

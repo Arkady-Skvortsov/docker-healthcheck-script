@@ -1,0 +1,18 @@
+#!/bin/bash
+
+source ../../.env
+
+function check_amqp_health() {
+  set -eo pipefail
+
+  host="$(hostname -s || echo 'localhost')"
+  export RABBITMQ_NODENAME="${RABBITMQ_DEFAULT_USER:-"rabbit@$host"}"
+
+  if rabbitmqctl status; then
+	  exit 0
+  fi
+
+  exit 1
+}
+
+check_amqp_health

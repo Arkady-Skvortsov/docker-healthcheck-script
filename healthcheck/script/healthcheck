@@ -5,7 +5,7 @@ retries=$1;
 
 while [ "${count}" != "${retries}" ];
 do
-  docker inspect --format='{{json .State.Health}}' $3;
+  docker inspect --format="{{json .State.Health}}" $3;
 
   count=$((++count));
 
